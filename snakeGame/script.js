@@ -1,5 +1,5 @@
 function init(){
-    
+    gameover = false;
     canvas = document.getElementById('canvas');
     pen = canvas.getContext('2d');
     canvas.height = (window.innerHeight || document.body.clientHeight)-30;
@@ -11,17 +11,17 @@ function init(){
     //snake JSON
     snake = {
         
-        length:5,
+        length: 20,
         particles: [],
-        direction:"right",
+        direction: "right",
         
-        create:function(){
+        create: function(){
             for(var i=this.length-1;i>=0;i--){
                 this.particles.push( {x:i,y:0});
             }
         },
         
-        draw:function(){
+        draw: function(){
             this.particles.forEach(function(particle){
                 pen.fillStyle = "red";
                 pen.strokeStyle = "white";
@@ -31,17 +31,21 @@ function init(){
             });
         },
         
-        update:function(){  
+        update: function(){  
             
             var newX = this.particles[0].x;
             var newY = this.particles[0].y;
             
-            if(newX==food.x &&newY==food.y){
+            if(isCollide()){
+                gameover = true;
+            }
+            
+            if(newX==food.x && newY==food.y){
                 food = generateFood();
                 score++;
             }
             else{
-                var lastparticle = this.particles.pop();   
+                this.particles.pop();   
             }
             
             
@@ -86,6 +90,19 @@ function init(){
                 break;
         }
     }
+
+    function isCollide(){
+        var x = snake.particles[0].x;
+        var y = snake.particles[0].y;
+        for(var i=1;i<snake.particles.length;i++){
+            var xx = snake.particles[i].x;
+            var yy = snake.particles[i].y;
+            if(xx===x&&yy===y){
+                return true;
+            }
+        }
+        return false;
+    }
     
     ///Listner for Keyboard Inputs
     document.addEventListener('keydown',changeDir);
@@ -115,8 +132,13 @@ function update(){
 }
 
 function render(){
-    draw();
-    update();
+    if(!gameover){
+        draw();
+        update();
+    }
+    else{
+        drawGO();
+    }
 }
 
 init();
@@ -132,8 +154,17 @@ setInterval(render,60);
 function generateFood(){
     var x = Math.round(Math.random()*(W - 20)/20);
     var y = Math.round(Math.random()*(H-20)/20);
-    console.log(x+" ," +y);
     return {x:x,y:y};
+}
+
+function drawGO(){
+    //clear old screen
+    pen.clearRect(0,0,W,H);
+    
+    pen.fillStyle = "green";
+    //draw score
+    pen.fillText("Score: "+score,W/2-20,H/2-10);
+    pen.fillText("Game Over!",W/2-30,H/2+30);
 }
 
 
