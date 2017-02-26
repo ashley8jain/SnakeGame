@@ -2,6 +2,8 @@ function init(){
     
     canvas = document.getElementById('canvas');
     pen = canvas.getContext('2d');
+    canvas.height = (window.innerHeight || document.body.clientHeight)-30;
+    canvas.width = (window.innerWidth || document.body.clientWidth)-30;
     W = canvas.width;
     H = canvas.height;
     score = 0;
@@ -64,20 +66,25 @@ function init(){
     snake.create();
     
     function changeDir(e){
-        if(e.key=="ArrowLeft"){
-            snake.direction = "left";
-        }
-        else if(e.key=="ArrowRight"){
-            snake.direction = "right";
-        }
-        else if(e.key=="ArrowUp"){
-            snake.direction = "up";
-        }
-        else if(e.key=="ArrowDown"){
-            snake.direction = "down";
-        }
         
-        
+        switch(e.key){
+            case "ArrowLeft":
+                if(snake.direction!="right")
+                    snake.direction = "left";
+                break;
+            case "ArrowRight":
+                if(snake.direction!="left")
+                    snake.direction = "right";
+                break;
+            case "ArrowUp":
+                if(snake.direction!="down")
+                    snake.direction = "up";
+                break;
+            case "ArrowDown":
+                if(snake.direction!="up")
+                    snake.direction = "down";
+                break;
+        }
     }
     
     ///Listner for Keyboard Inputs
